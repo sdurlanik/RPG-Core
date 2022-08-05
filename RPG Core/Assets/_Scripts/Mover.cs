@@ -7,21 +7,37 @@ using Random = UnityEngine.Random;
 
 public class Mover : MonoBehaviour
 {
-    
-    // Hedef transform
-    [SerializeField] private Transform _target;
+    private static readonly int ForwardSpeed = Animator.StringToHash("forwardSpeed");
 
 
     void Update()
     {
         // Fare sol tık
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
             MoveToCursor();
         }
 
+        UpdateAnimation();
+        
+
     }
-    
+
+    private void UpdateAnimation()
+    {
+        // NavMeshin velocitysini alır   
+        Vector3 velocity = GetComponent<NavMeshAgent>().velocity;
+
+        // Global olan velocity değerini locale çevirir (Animatör üzerinde kullanmak için)
+        Vector3 localVelocity = transform.InverseTransformDirection(velocity);
+        
+        // Hız olarak sadece Z eksenindeki hareketi alınır
+        float speed = localVelocity.z;
+        
+        // Animatörün forwardSpeed değişkenine hız değerini atar
+        GetComponent<Animator>().SetFloat(ForwardSpeed, speed);
+    }
+
     // Ekranda tıklandığı noktaya hareket
     private void MoveToCursor()
     {
