@@ -20,6 +20,7 @@ namespace RPG.Movement
         private Fighter _fighter;
         private ActionScheduler _actionScheduler;
 
+        private Health health;
 
         private void Start()
         {
@@ -27,10 +28,12 @@ namespace RPG.Movement
             _animator = GetComponent<Animator>();
             _fighter = GetComponent<Fighter>();
             _actionScheduler = GetComponent<ActionScheduler>();
+            health = GetComponent<Health>();
         }
 
         void Update()
         {
+            _navMeshAgent.enabled = !health.IsDead();
             UpdateAnimation();
         }
 

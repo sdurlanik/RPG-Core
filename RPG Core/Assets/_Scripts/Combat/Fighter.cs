@@ -11,7 +11,7 @@ namespace RPG.Combat
     public class Fighter : MonoBehaviour, IAction
     {
         [SerializeField] private float _weaponRange = 2f;
-        [SerializeField] private float _timeBetweenAttacks = 1f;
+        [SerializeField] private float _timeBetweenAttacks = Mathf.Infinity;
         [SerializeField] private float weaponDamage = 5f;
         
         private Health _target;
@@ -34,7 +34,7 @@ namespace RPG.Combat
             if (_target == null) return;
             if (_target.IsDead()) return;
 
-                if (GetDistance())
+            if (GetDistance())
             {
                 _mover.MoveTo(_target.transform.position);
             }
@@ -74,11 +74,19 @@ namespace RPG.Combat
             _target.TakeDamage(weaponDamage);
         }
 
-        public void Attack(CombatTarget combatTarget)
+        public void Attack(GameObject combatTarget)
         {
             _actionScheduler.StartAction(this);
 
             _target = combatTarget.GetComponent<Health>();
+        }
+        
+        public bool CanAttack(GameObject combatTarget)
+        {
+            if (combatTarget == null) return false;
+            
+            Health targetToTest = combatTarget.GetComponent<Health>();
+            return !targetToTest.IsDead() && targetToTest != null;
         }
 
         public void Cancel()
@@ -93,13 +101,7 @@ namespace RPG.Combat
             _animator.SetTrigger("stopAttack");
         }
 
-        public bool CanAttack(CombatTarget combatTarget)
-        {
-            if (combatTarget == null) return false;
-            
-            Health targetToTest = combatTarget.GetComponent<Health>();
-            return !targetToTest.IsDead() && targetToTest != null;
-        }
+        
         
     }
 
